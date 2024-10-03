@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_tag_props(self):
@@ -60,5 +60,31 @@ class TestHTMLNode(unittest.TestCase):
             node.__repr__(),
             "HTMLNode(p, What a strange world, children: None, {'class': 'primary'})",
         )
+
+    def test_leafnode_values(self):
+        node = LeafNode("p", "This is a paragraph of text.")
+        self.assertEqual(node.tag, "p")
+        self.assertEqual(node.value, "This is a paragraph of text.")
+        self.assertEqual(node.children, None)
+        self.assertEqual(node.props, None)
+
+    def test_basic_leafnode(self):
+        node = LeafNode("p","This is a paragraph of text.")
+        self.assertEqual("<p>This is a paragraph of text.</p>", node.to_html())
+
+    def test_leafnode_with_props(self):
+        node = LeafNode("a", "Click me!", {"href":"https://www.google.co.uk"})
+        self.assertEqual(
+            "<a href=\"https://www.google.co.uk\">Click me!</a>",
+            node.to_html()
+            )
+
+    def test_to_html_no_children(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+    def test_to_html_no_tag(self):
+        node = LeafNode(None, "Hello, world!")
+        self.assertEqual(node.to_html(), "Hello, world!") 
 if __name__=="__main__":
     unittest.main()
