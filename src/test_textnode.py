@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, text_type_bold, text_type_code, text_type_image,text_type_italic,text_type_link,text_type_text
+from textnode import TextNode, text_type_bold, text_type_code, text_type_image,text_type_italic,text_type_link,text_type_text, text_node_to_html_node
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -31,6 +31,28 @@ class TestTextNode(unittest.TestCase):
     def test_repr(self):
         node = TextNode("This is a text node", text_type_bold, "http://www.google.com")
         self.assertEqual("TextNode(This is a text node, bold, http://www.google.com)", repr(node))
+
+class TestTextNodeToHTMLNode(unittest.TestCase):
+    def test_text(self):
+        node = TextNode("This is a text node", text_type_text)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+
+    def test_image(self):
+        node = TextNode("This is an image", text_type_image,"http://www.images.com/image.jpg")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.value, "")
+        self.assertEqual(html_node.props, {"src":"http://www.images.com/image.jpg", "alt":"This is an image"})
+    
+    def test_link(self):
+        node = TextNode("Click Me!", text_type_link, "http://www.google.co.uk")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "a")
+        self.assertEqual(html_node.value, "Click Me!")
+        self.assertEqual(html_node.props, {"href":"http://www.google.co.uk"})
+
 
 if __name__=="__main__":
     unittest.main()
